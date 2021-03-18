@@ -12,8 +12,8 @@ em = formatter.embed_message
 basic_formatter = {
     cmd.MissingRequiredArgument: "You forgot to define the argument **{error.param.name}**. "
                                  "Use `{ctx.config.prefix}help {ctx.command.qualified_name}` for more information.",
-    cmd.NoPrivateMessage: "This command **can't be used** in **private** messages.",
-    cmd.DisabledCommand: "This command is currently **disabled**.",
+    cmd.NoPrivateMessage: "DM에서는 이 명령어를 사용할수가 없어요.",
+    cmd.DisabledCommand: "해당 명령어가 **비활성화** 되어 있네요.",
     cmd.NotOwner: "This command can **only** be used by **the owner** of this bot."
 }
 
@@ -46,17 +46,17 @@ class Errors(cmd.Cog):
                 return
 
         if isinstance(error, cmd.BotMissingPermissions):
-            await ctx.send(**em(f"The bot is **missing** the following **permissions** `{', '.join(error.missing_perms)}`.", type="error"))
+            await ctx.send(**em(f"봇 **권한**이 충분하지 않네요. 서버 설정 => 역할 에 가서`{', '.join(error.missing_perms)}` 를 허용하세요.", type="error"))
             return
 
         if isinstance(error, cmd.MissingPermissions):
-            await ctx.send(**em(f"You are **missing** the following **permissions** `{', '.join(error.missing_perms)}`.", type="error"))
+            await ctx.send(**em(f"당신의 **권한**이 충분하지 않네요. 서버 설정 => 역할 에 가서`{', '.join(error.missing_perms)}`를 허용하세요.", type="error"))
             return
 
         if isinstance(error, cmd.CommandOnCooldown):
             await ctx.send(**ctx.em(
-                f"This command is currently **on cooldown** for `{str(timedelta(seconds=error.cooldown.per)).split('.')[0]}`.\n"
-                f"Please **try again in** `{str(timedelta(seconds=error.retry_after)).split('.')[0]}`.",
+                f"이 명령어가 현재 **쿨 따운** 중입니다. `{str(timedelta(seconds=error.cooldown.per)).split('.')[0]}`.\n"
+                f"잠시만 기다려 보실레요? `{str(timedelta(seconds=error.retry_after)).split('.')[0]}`.",
                 type="error")
             )
             return

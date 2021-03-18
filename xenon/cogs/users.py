@@ -16,8 +16,8 @@ class Users(cmd.Cog, command_attrs=dict(hidden=True)):
             if entry is None:
                 return True
 
-            raise cmd.CommandError("Sorry, **you are blacklisted**.\n\n"
-                                   f"**Reason**: {entry['blacklist']['reason']}")
+            raise cmd.CommandError("당신은 블랙리스트에 참여되어 있습니다.\n\n"
+                                   f"**사유**: {entry['blacklist']['reason']}")
 
     @cmd.group(aliases=["bl"], invoke_without_command=True)
     @checks.has_role_on_support_guild("Staff")
@@ -26,7 +26,7 @@ class Users(cmd.Cog, command_attrs=dict(hidden=True)):
         count = await ctx.db.users.count_documents({"blacklist.state": True})
         blacklist = await ctx.db.users.find({"blacklist.state": True}).to_list(count)
         if len(blacklist) == 0:
-            await ctx.send(**ctx.em("The blacklist is empty", type="info"))
+            await ctx.send(**ctx.em("블랙리스트 기록이 없어요.", type="info"))
 
         for entry in blacklist:
             user = await self.bot.fetch_user(entry["_id"])
@@ -51,13 +51,13 @@ class Users(cmd.Cog, command_attrs=dict(hidden=True)):
                 "timestamp": datetime.now(pytz.utc)
             }
         }}, upsert=True)
-        await ctx.send(**ctx.em(f"Successfully **blacklisted** the user **{str(user)}** (<@{user.id}>).", type="success"))
+        await ctx.send(**ctx.em(f"성공적으로 해당 **{str(user)}** (<@{user.id}>)을 블랙리스트에 넣었습니다..", type="success"))
 
     @blacklist.command(aliases=["rm", "remove", "del"])
     @checks.has_role_on_support_guild("Admin")
     async def delete(self, ctx, user: discord.User):
         await ctx.db.users.update_one({"_id": user.id}, {"$set": {"blacklist": {"state": False}}})
-        await ctx.send(**ctx.em(f"Successfully **removed** the user **{str(user)}** (<@{user.id}>) from the **blacklist**.", type="success"))
+        await ctx.send(**ctx.em(f"성공적으로 해당 **{str(user)}** (<@{user.id}>)을 블랙리스트에서 제거 했습니다.", type="success"))
 
 
 def setup(bot):
